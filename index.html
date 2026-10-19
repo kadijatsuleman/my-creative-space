@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nightshift – build your dream while the world sleeps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500;12..96,800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06050d; --panel:#0e0c1c; --line:#241f40;
+  --moon:#d6cbff; --dim:#8a82b3; --ember:#ffb15e; --done:#7ee0c3;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0}
+html,body{min-height:100%}
+body{
+  background:radial-gradient(ellipse 80% 50% at 50% -10%,#1a1440 0%,var(--bg) 60%) fixed,var(--bg);
+  color:var(--moon);font-family:'DM Sans',system-ui,sans-serif;line-height:1.6;
+  padding:max(24px,env(safe-area-inset-top)) 20px max(40px,env(safe-area-inset-bottom));
+}
+main{max-width:720px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0 0}
+.brand{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.3rem;
+  text-shadow:0 0 14px rgba(214,203,255,.6)}
+.clock{color:var(--dim);font-size:.95rem;font-variant-numeric:tabular-nums}
+
+.hero{text-align:center;padding:64px 0 40px}
+.hero p.lead{font-family:'Bricolage Grotesque',sans-serif;font-weight:300;font-size:clamp(1.1rem,3.4vw,1.5rem);
+  color:var(--dim);max-width:30ch;margin:0 auto 28px}
+.count{
+  font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
+  font-size:clamp(3rem,15vw,7.5rem);line-height:1;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;color:#fff3df;
+  text-shadow:0 0 8px rgba(255,177,94,.9),0 0 28px rgba(255,177,94,.55),0 0 70px rgba(255,140,60,.35);
+}
+.count .sep{display:inline-block;animation:pulse 2s ease-in-out infinite;opacity:.9}
+@keyframes pulse{50%{opacity:.25}}
+.count-label{margin-top:14px;color:var(--dim);font-size:1rem}
+.bar{height:6px;background:var(--panel);border:1px solid var(--line);border-radius:99px;margin:26px auto 8px;max-width:440px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6b4cff,var(--ember));
+  box-shadow:0 0 12px var(--ember);border-radius:99px;transition:width 1s linear}
+.status{color:var(--dim);font-size:.9rem}
+
+.settings{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:22px;color:var(--dim);font-size:.9rem}
+.settings label{display:flex;align-items:center;gap:8px}
+input[type=time],input[type=text]{
+  background:var(--panel);color:var(--moon);border:1px solid var(--line);border-radius:10px;
+  padding:8px 10px;font:inherit;
+}
+input:focus-visible,button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}
+
+section.goals{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;margin-top:20px;
+  box-shadow:0 0 40px rgba(107,76,255,.08)}
+.goals-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:18px}
+h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:500;font-size:1.5rem;
+  text-shadow:0 0 12px rgba(214,203,255,.45)}
+.tally{color:var(--done);text-shadow:0 0 10px rgba(126,224,195,.5);font-variant-numeric:tabular-nums}
+form.add{display:flex;gap:10px;margin-bottom:16px}
+form.add input{flex:1;min-width:0;padding:12px 14px}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--ember);background:transparent;color:var(--ember);
+  padding:10px 18px;font-weight:500;text-shadow:0 0 10px rgba(255,177,94,.6);transition:background .2s,color .2s}
+button:hover{background:var(--ember);color:#1a1020;text-shadow:none}
+ul{list-style:none;padding:0}
+li{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+li:first-child{border-top:0}
+li input[type=checkbox]{appearance:none;width:22px;height:22px;border:2px solid var(--dim);border-radius:7px;cursor:pointer;flex:none;display:grid;place-content:center}
+li input[type=checkbox]:checked{border-color:var(--done);box-shadow:0 0 10px rgba(126,224,195,.6)}
+li input[type=checkbox]:checked::after{content:"";width:10px;height:10px;border-radius:3px;background:var(--done)}
+li span{flex:1;overflow-wrap:anywhere}
+li.done span{color:var(--dim);text-decoration:line-through}
+li .x{border:0;color:var(--dim);padding:4px 8px;text-shadow:none;font-size:1.2rem;line-height:1}
+li .x:hover{background:transparent;color:#ff8a8a}
+.empty{color:var(--dim);padding:8px 0}
+footer{text-align:center;color:var(--dim);font-size:.9rem;margin-top:36px;font-style:italic}
+@media (prefers-reduced-motion:reduce){.count .sep{animation:none}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand">Nightshift</div>
+    <div class="clock" id="clock" aria-label="Current time"></div>
+  </header>
+
+  <div class="hero">
+    <p class="lead">Everyone else is asleep. This is your time to build.</p>
+    <div class="count" id="count" role="timer" aria-live="off">00<span class="sep">:</span>00<span class="sep">:</span>00</div>
+    <div class="count-label" id="countLabel">until sunrise</div>
+    <div class="bar" role="progressbar" aria-label="Night progress" aria-valuemin="0" aria-valuemax="100" id="barWrap"><i id="bar"></i></div>
+    <div class="status" id="status"></div>
+    <div class="settings">
+      <label>Shift starts <input type="time" id="start" value="22:00"></label>
+      <label>Sunrise <input type="time" id="wake" value="05:00"></label>
+    </div>
+  </div>
+
+  <section class="goals" aria-labelledby="gTitle">
+    <div class="goals-head">
+      <h2 id="gTitle">Tonight’s goals</h2>
+      <div class="tally" id="tally"></div>
+    </div>
+    <form class="add" id="form">
+      <input type="text" id="newGoal" placeholder="What will you finish tonight?" maxlength="120" aria-label="New goal" autocomplete="off">
+      <button type="submit">Add goal</button>
+    </form>
+    <ul id="list"></ul>
+  </section>
+
+  <footer id="quote"></footer>
+</main>
+
+<script>
+(function(){
+  var KEY='nightshift:v1';
+  var today=function(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();};
+  var state={start:'22:00',wake:'05:00',goals:[],day:today()};
+
+  function load(){
+    try{var s=localStorage.getItem(KEY);if(s){state=Object.assign(state,JSON.parse(s));}}catch(e){}
+    // New day: drop finished goals, keep unfinished ones
+    if(state.day!==today()){
+      state.goals=state.goals.filter(function(g){return !g.done;});
+      state.day=today();
+    }
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+  var $=function(id){return document.getElementById(id);};
+  var pad=function(n){return String(n).padStart(2,'0');};
+  function atTime(base,hm){var p=hm.split(':');var d=new Date(base);d.setHours(+p[0],+p[1],0,0);return d;}
+
+  function tick(){
+    var now=new Date();
+    $('clock').textContent=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    var wake=atTime(now,state.wake);
+    if(wake<=now)wake.setDate(wake.getDate()+1);
+    var start=atTime(wake,state.start);
+    if(start>=wake)start.setDate(start.getDate()-1);
+    var left=Math.max(0,wake-now),s=Math.floor(left/1000);
+    $('count').innerHTML=pad(Math.floor(s/3600))+'<span class="sep">:</span>'+pad(Math.floor(s%3600/60))+'<span class="sep">:</span>'+pad(s%60);
+    var pct=Math.min(1,Math.max(0,(now-start)/(wake-start)));
+    $('bar').style.width=(pct*100)+'%';
+    $('barWrap').setAttribute('aria-valuenow',Math.round(pct*100));
+    if(now<start){
+      $('countLabel').textContent='until sunrise';
+      $('status').textContent='Your shift begins at '+state.start+'. Plan your goals now.';
+    }else{
+      $('countLabel').textContent='until sunrise';
+      $('status').textContent=Math.round(pct*100)+'% of the night is behind you. Keep building.';
+    }
+  }
+
+  function render(){
+    var ul=$('list');ul.innerHTML='';
+    if(!state.goals.length){
+      var e=document.createElement('li');e.className='empty';e.textContent='No goals yet. Add one thing you will finish before sunrise.';ul.appendChild(e);
+    }
+    state.goals.forEach(function(g){
+      var li=document.createElement('li');if(g.done)li.className='done';
+      var cb=document.createElement('input');cb.type='checkbox';cb.checked=g.done;
+      cb.setAttribute('aria-label','Mark done: '+g.text);
+      cb.onchange=function(){g.done=cb.checked;save();render();};
+      var sp=document.createElement('span');sp.textContent=g.text;
+      var x=document.createElement('button');x.type='button';x.className='x';x.textContent='×';
+      x.setAttribute('aria-label','Delete goal: '+g.text);
+      x.onclick=function(){state.goals=state.goals.filter(function(h){return h!==g;});save();render();};
+      li.appendChild(cb);li.appendChild(sp);li.appendChild(x);ul.appendChild(li);
+    });
+    var d=state.goals.filter(function(g){return g.done;}).length;
+    $('tally').textContent=state.goals.length?d+' of '+state.goals.length+' done':'';
+  }
+
+  $('form').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var v=$('newGoal').value.trim();if(!v)return;
+    state.goals.push({text:v,done:false});
+    $('newGoal').value='';save();render();
+  });
+  ['start','wake'].forEach(function(k){
+    $(k).addEventListener('change',function(){if(this.value){state[k]=this.value;save();tick();}});
+  });
+
+  var quotes=[
+    'Small hours, big work.',
+    'The quiet is the advantage.',
+    'Sleep is for people who already have it.',
+    'Nobody is watching. Build anyway.',
+    'Sunrise will find you further along.'
+  ];
+
+  load();
+  $('start').value=state.start;$('wake').value=state.wake;
+  $('quote').textContent=quotes[Math.floor(Math.random()*quotes.length)];
+  render();tick();setInterval(tick,1000);
+})();
+</script>
+</body>
+</html>
